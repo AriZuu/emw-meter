@@ -12,6 +12,13 @@ data comes from [Finnish Meteorological Institute][2].
 
 Inside temperature is measured by DS1820.
 
+After building firmware and loading it to WifiMCU, type
+"help" at console prompt to get started. "sta" will connect to system
+to existing access point. Incoming MQTT messaging is currently
+not configurable, ie. topic names, json attributes and server name
+is built into code and thus need to be modified to be useful
+to someone else than me.
+
 GPIO connections:
 
 DS1820     D3    PB10
