@@ -5,6 +5,11 @@ It receives data with MQTT protocol (using potato-bus library) and displays
 inside and outside temperatures along with weather forecast symbol. I have
 also sensor that measures house electricity usage so that is displayed too.
 
+In addition to current values, it collects history for some hours and
+displays a trend/bar graph from it at bottom of display. There is
+also a weather symbol that shows forecast for next 8 hours. Forecast
+data comes from [Finnish Meteorological Institute][2].
+
 Inside temperature is measured by DS1820.
 
 GPIO connections:
@@ -18,6 +23,11 @@ OLED MOSI  D1    PA1    SPI4_MOSI
      C/D   D7    PA12
      RST   D15   PB1
 
+SWDIO      D6
+SWCLK      D5
+RESET      RST
+
 Weather forecast symbol font is created from files available at [fmidev github][1]
 
 [1]: https://github.com/fmidev/opendata-resources/tree/master/symbols
+[2]: http://fmi.fi
