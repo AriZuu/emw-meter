@@ -73,7 +73,7 @@ static void tcpipInitDone(void *arg)
   sys_sem_t *sem;
   sem = (sys_sem_t *)arg;
 
-  printf("Initializing Wifi.\n");
+  printf("Loading Wifi firmware and initializing.\n");
 
 /*
  * Bring WIFI up.
