@@ -60,8 +60,6 @@
 #include "emw-meter.h"
 
 static bool alreadyJoined = false;
-static bool apActive = false;
-static bool apIfAdded = false;
 
 void initConfig()
 {
@@ -113,88 +111,6 @@ void ifStatusCallback(struct netif *netif)
 }
 
 struct netif defaultIf;
-struct netif apIf;
-
-static int apUp()
-{
-  wiced_ssid_t ssid;
-
-  strcpy((char*)ssid.value, "EMW3165");
-  ssid.length = strlen((char*)ssid.value);
-
-  printf("Starting Access Point.\n");
-
-  if (!apIfAdded) {
-
-    ip4_addr_t ipaddr, netmask, gw;
-    IP4_ADDR(&gw, 192,168,0,1);
-    IP4_ADDR(&ipaddr, 192,168,0,1);
-    IP4_ADDR(&netmask, 255,255,255,0);
-
-    netifapi_netif_add(&apIf,
-                       &ipaddr,
-                       &netmask,
-                       &gw,
-                       (void*)WWD_AP_INTERFACE,
-                       ethernetif_init,
-                       tcpip_input);
-    apIfAdded = true;
-  }
-
-#define AP_CHANNEL 1
-
-  wwd_wifi_start_ap( &ssid, WICED_SECURITY_WPA2_AES_PSK, (uint8_t*) "xxx123!!!", 9, AP_CHANNEL );
-  netifapi_netif_set_up(&apIf);
-
-  dhcpServerStart(&apIf);
-
-  apActive = true;
-  return 0;
-}
-
-static void apDown()
-{
-  dhcpServerStop(&apIf);
-  netifapi_netif_set_down(&apIf);
-  wwd_wifi_leave(WWD_AP_INTERFACE);
-  apActive = false;
-}
-
-/*
- * Activate access point in EMW3165, handy for initial configuration.
- */
-static int ap(EshContext* ctx)
-{
-  char* stop = eshNamedArg(ctx, "stop", false);
-
-  eshCheckNamedArgsUsed(ctx);
-  eshCheckArgsUsed(ctx);
-  if (eshArgError(ctx) != EshOK)
-    return -1;
-
-  if (stop) {
-
-    if (alreadyJoined) {
-
-      apDown();
-      eshPrintf(ctx, "AP stopped.\n");
-      apActive = false;
-    }
-
-    return 0;
-  }
-
-  if (apActive) {
-
-    eshPrintf(ctx, "AP already running.\n");
-    return -1;
-  }
-
-  if (apUp() == -1)
-    eshPrintf(ctx, "Cannot start AP.\n");
-
-  return 0;
-}
 
 static int staUp()
 {
@@ -419,13 +335,6 @@ const EshCommand staCommand = {
   .handler = sta
 }; 
 
-const EshCommand apCommand = {
-  .flags = 0,
-  .name = "ap",
-  .help = "--stop | start stop access point",
-  .handler = ap
-}; 
-
 const EshCommand wrCommand = {
   .flags = 0,
   .name = "wr",
@@ -440,11 +349,15 @@ const EshCommand clearCommand = {
   .handler = clear
 }; 
 
+extern const EshCommand mqttCommand;
+extern const EshCommand apCommand;
+
 const EshCommand *eshCommandList[] = {
 
 #if BUNDLE_FIRMWARE
   &copyfwCommand,
 #endif
+  &mqttCommand,
   &staCommand,
   &apCommand,
   &wrCommand,

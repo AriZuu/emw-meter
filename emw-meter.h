@@ -33,6 +33,7 @@
 
 void initConfig(void);
 void checkAP(void);
+int  apUp(void);
 void wifiLedInit(void);
 void wifiLed(bool on);
 void potatoInit(void);

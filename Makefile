@@ -56,6 +56,7 @@ SRC_TXT =	 main.c \
                  startup.c \
                  romfiles.c \
                  sta.c \
+                 ap.c \
                  led.c \
                  devtree.c \
                  spibus.c \
