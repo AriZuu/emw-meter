@@ -36,6 +36,7 @@
 #include <string.h>
 #include <math.h>
 #include "mjson.h"
+#include <eshell.h>
 
 #include "potato-bus.h"
 #include "emw-meter.h"
@@ -106,17 +107,48 @@ static const struct json_attr_t jsonAttrs[] = {
   
 static PbClient client;
 
+/*
+ * Configure mqtt client.
+ */
+static int mqtt(EshContext* ctx)
+{
+  char* server = eshNamedArg(ctx, "server", true);
+
+  eshCheckNamedArgsUsed(ctx);
+  eshCheckArgsUsed(ctx);
+  if (eshArgError(ctx) != EshOK)
+    return -1;
+
+  uosConfigSet("mqtt.server", server);
+  return 0;
+}
+
+const EshCommand mqttCommand = {
+  .flags = 0,
+  .name = "mqtt",
+  .help = "--server servername configure mqtt client",
+  .handler = mqtt
+}; 
+
 static void potatoTask(void* arg)
 {
   char jsonBuf[80];
+
 
   while (true) {
 
     PbConnect cd = {};
     cd.clientId = "test";
     cd.keepAlive= 60;
+    const char* server = uosConfigGet("mqtt.server");
   
-    if (pbConnect(&client, "mqtt.stonepile.fi", "1883", &cd) < 0) {
+    if (server == NULL) {
+
+      posTaskSleep(MS(10000));
+      continue;
+    }
+
+    if (pbConnect(&client, server, "1883", &cd) < 0) {
 
       printf("potato: connect failed.\n");
       posTaskSleep(MS(10000));
