@@ -65,6 +65,8 @@ void init1Wire()
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   GPIO_ResetBits(GPIOB, GPIO_Pin_10);
+  owInit();
+
   if (!owAcquire(0, NULL)) {
 
     printf("OneWire: owAcquire failed\n");
