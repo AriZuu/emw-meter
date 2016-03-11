@@ -165,20 +165,6 @@ static void mainTask(void* arg)
   eshStartTelnetd();
   guiStart();
   eshConsole();
-
-#if 0
-/*
- * Display task resource usage each minute.
- */
-  while (1) {
-
-   posTaskSleep(MS(60000));
-   uosResourceDiag();
-#if LWIP_STATS_DISPLAY
-   stats_display();
-#endif
-  }
-#endif 
 }
 
 
