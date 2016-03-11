@@ -115,7 +115,6 @@ static void guiTask(void* arg)
       UG_PutChar(weatherSymbol, FORECAST_POS, C_WHITE, C_BLACK);
     }
 
-//    UG_DrawFrame(58, 63-25, 58 + 70, 63, C_WHITE);
     if (stats != NULL) {
 
       int x;
