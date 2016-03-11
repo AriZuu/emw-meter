@@ -130,23 +130,9 @@ static int staUp()
 
   printf("Join OK.\n");
 
-#if LWIP_DHCP != 0
-
   netifapi_netif_set_up(&defaultIf);
   netif_set_status_callback(&defaultIf, ifStatusCallback);
   netifapi_dhcp_start(&defaultIf);
-
-#else
-
-  netif_set_status_callback(&defaultIf, ifStatusCallback);
-  netifapi_netif_set_up(&defaultIf);
-
-  ip_addr_t dns;
-
-  IP4_ADDR(&dns, 192,168,61,10);
-  dns_setserver(0, &dns);
-
-#endif
 
 #if LWIP_IPV6
   netif_create_ip6_linklocal_address(&defaultIf, 1);
@@ -163,12 +149,8 @@ static int staUp()
 static void staDown()
 {
   wifiLed(false);
-#if LWIP_DHCP != 0
 
   netifapi_dhcp_stop(&defaultIf);
-
-#endif
-
   netifapi_netif_set_down(&defaultIf);
   wwd_wifi_leave(WWD_STA_INTERFACE);
 }

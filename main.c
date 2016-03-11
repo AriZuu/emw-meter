@@ -98,19 +98,9 @@ static void tcpipInitDone(void *arg)
 
   ip4_addr_t ipaddr, netmask, gw;
 
-#if LWIP_DHCP != 0
-
   ip4_addr_set_zero(&gw);
   ip4_addr_set_zero(&ipaddr);
   ip4_addr_set_zero(&netmask);
-
-#else
-
-  IP4_ADDR(&gw, 192,168,61,1);
-  IP4_ADDR(&ipaddr, 192,168,61,55);
-  IP4_ADDR(&netmask, 255,255,255,0);
-
-#endif
 
   netif_add(&defaultIf,
             &ipaddr,
