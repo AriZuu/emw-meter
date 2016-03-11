@@ -186,28 +186,6 @@ int main(int argc, char **argv)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
 
-#if PORTCFG_CON_USART == 1
-
-  // Enable USART clock.
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-
-  // Configure usart2 pins.
-
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
-
-#endif
-
   wifiLedInit();
   wifiLed(false);
 
