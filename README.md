@@ -36,5 +36,17 @@ RESET      RST
 
 Weather forecast symbol font is created from files available at [fmidev github][1]
 
+To build this following modules are needed:
+
+* Pico]OS 
+* picoos-micro
+* picoos-micro-spiffs
+* picoos-lwip
+* picoos-ow
+* wiced-driver
+* cmsis-ports
+* potato-bus
+* eshell
+
 [1]: https://github.com/fmidev/opendata-resources/tree/master/symbols
 [2]: http://fmi.fi
