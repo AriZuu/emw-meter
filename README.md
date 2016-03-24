@@ -48,5 +48,8 @@ To build this following modules are needed:
 * potato-bus
 * eshell
 
+There is a short story about the project [here][3].
+
 [1]: https://github.com/fmidev/opendata-resources/tree/master/symbols
 [2]: http://fmi.fi
+[3]: http://stonepile.fi/thermometer-with-emw3165/
