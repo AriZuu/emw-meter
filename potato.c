@@ -38,12 +38,16 @@
 #include "mjson.h"
 #include <eshell.h>
 
+#include "wwd_wifi.h"
+
 #include "potato-bus.h"
 #include "emw-meter.h"
 
 int16_t outsideStats[MAX_STATS];
 int16_t insideStats[MAX_STATS];
 int16_t powerStats[MAX_STATS];
+
+extern wiced_mac_t   myMac;
 
 typedef struct {
 
@@ -137,8 +141,12 @@ static void potatoTask(void* arg)
 
   while (true) {
 
+    sprintf(jsonBuf, "EMW%02x%02x%02x%02x%02x%02x", myMac.octet[0],
+                myMac.octet[1], myMac.octet[2], myMac.octet[3],
+                myMac.octet[4], myMac.octet[5]);
+
     PbConnect cd = {};
-    cd.clientId = "test";
+    cd.clientId = jsonBuf;
     cd.keepAlive= 60;
     const char* server = uosConfigGet("mqtt.server");
   

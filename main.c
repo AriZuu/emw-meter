@@ -60,7 +60,7 @@ extern const UosRomFile romFiles[];
 
 void tcpServerThread(void*);
 
-static wiced_mac_t   myMac             = { {  0, 0, 0, 0, 0, 0 } };
+wiced_mac_t   myMac             = { {  0, 0, 0, 0, 0, 0 } };
 
 extern struct netif defaultIf;
 
