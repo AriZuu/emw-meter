@@ -86,8 +86,6 @@ static void tcpipInitDone(void *arg)
 
 
   wwd_wifi_get_mac_address(&myMac, WWD_STA_INTERFACE);
-  //wwd_wifi_enable_powersave();
-  //platform_mcu_powersave_enable();
 
   printf("Mac addr is %02x:%02x:%02x:%02x:%02x:%02x\n", myMac.octet[0],
                 myMac.octet[1], myMac.octet[2], myMac.octet[3],
