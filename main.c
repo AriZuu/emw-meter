@@ -40,6 +40,7 @@
 #include "lwip/mem.h"
 #include "lwip/memp.h"
 #include "lwip/sys.h"
+#include "lwip/netifapi.h"
 
 #include "lwip/stats.h"
 #include "lwip/inet.h"
@@ -154,7 +155,16 @@ static void mainTask(void* arg)
 
   eshStartTelnetd();
   guiStart();
+
+/*
+ * Enable sleep. It is initially enabled in pico]OS, but Wiced
+ * disables it during initialization.
+ */
+  posPowerEnableSleep();
+
+#if NOSCFG_FEATURE_CONIN
   eshConsole();
+#endif
 }
 
 
@@ -183,6 +193,17 @@ int main(int argc, char **argv)
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
 
+#endif
+
+#if !NOSCFG_FEATURE_CONIN
+
+/* 
+ * STM32 cannot sleep deep if USART input is needed (because it needs clock).
+ */
+  PWR->CR  |= PWR_CR_LPDS;
+  PWR->CR  &= (unsigned long) ( ~( PWR_CR_PDDS ) );
+
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 #endif
 
   nosInit(mainTask, NULL, 1, 5000, 512);

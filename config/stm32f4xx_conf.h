@@ -42,6 +42,8 @@
 #include "stm32f4xx_spi.h"
 #include "stm32f4xx_wwdg.h"
 #include "stm32f4xx_rtc.h"
+#include "stm32f4xx_exti.h"
+#include "stm32f4xx_pwr.h"
 #include "stm32f4xx_flash.h"
 #include "misc.h"
 

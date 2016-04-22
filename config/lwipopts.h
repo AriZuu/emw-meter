@@ -90,6 +90,7 @@ int sys_random(void);
 #define WDCFG_FIRMWARE "43362A2.bin"
 #define WDCFG_FIRMWARE_PATH "/firmware", "/flash"
 
+//#define TIMERS_DEBUG LWIP_DBG_ON
 //#define TCPIP_DEBUG      LWIP_DBG_ON
 //#define NETIF_DEBUG      LWIP_DBG_ON
 //#define SOCKETS_DEBUG    LWIP_DBG_OFF

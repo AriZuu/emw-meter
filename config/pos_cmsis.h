@@ -33,6 +33,7 @@
 void USART2_IRQHandler(void);
 void SDIO_irq(void);
 void DMA2_Stream3_irq(void);
+void RTC_WKUP_IRQHandler(void);
 
 /*
  * These are interrupt handlers inside Wiced usart code.

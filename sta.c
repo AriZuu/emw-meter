@@ -109,11 +109,8 @@ void ifStatusCallback(struct netif *netif)
     /*
      * Powersave experiments. Without these, about 73 mA is used.
      * With wifi powersave, 15-20 mA is used.
-     * Platform powersave cannot be used (yet), as it will stop
-     * systick.
      */
     //wwd_wifi_enable_powersave();
-    //platform_mcu_powersave_enable();
 
     potatoStart();
   }

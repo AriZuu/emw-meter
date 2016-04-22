@@ -47,10 +47,11 @@ void Default_Handler()
 
 extern unsigned int __stack[];
 
+PORT_WEAK_HANDLER(SysTick_Handler);
 PORT_WEAK_HANDLER(WWDG_irq);
 PORT_WEAK_HANDLER(PVD_irq);
 PORT_WEAK_HANDLER(TAMP_STAMP_irq);
-PORT_WEAK_HANDLER(RTC_WKUP_irq);
+PORT_WEAK_HANDLER(RTC_WKUP_IRQHandler);
 PORT_WEAK_HANDLER(FLASH_irq);
 PORT_WEAK_HANDLER(RCC_irq);
 PORT_WEAK_HANDLER(EXTI0_irq);
@@ -151,7 +152,7 @@ PortExcHandlerFunc vectorTable[] __attribute__ ((section(".vectors"))) =
     WWDG_irq,                   // Window WatchDog
     PVD_irq,                    // PVD through EXTI Line detection
     TAMP_STAMP_irq,             // Tamper and TimeStamps through the EXTI line
-    RTC_WKUP_irq,               // RTC Wakeup through the EXTI line
+    RTC_WKUP_IRQHandler,        // RTC Wakeup through the EXTI line
     FLASH_irq,                  // FLASH
     RCC_irq,                    // RCC
     EXTI0_irq,                  // EXTI Line0
