@@ -30,6 +30,7 @@ GPIO connections:
 | OLED CS    | D13 | PA5    (not really used by OLED module) |
 | OLED C/D   | D7  | PA12                                    |
 | OLED RST   | D15 | PB1                                     |
+| WIFI LED   | D17 | PA4                                     |
 | SWDIO      | D6  |                                         |
 | SWCLK      | D5  |                                         |
 | RESET      | RST |                                         |
