@@ -195,15 +195,19 @@ int main(int argc, char **argv)
 
 #endif
 
-#if !NOSCFG_FEATURE_CONIN
-
 /* 
  * STM32 cannot sleep deep if USART input is needed (because it needs clock).
  */
+#if !NOSCFG_FEATURE_CONIN
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+  PWR_FlashPowerDownCmd(ENABLE);
+
   PWR->CR  |= PWR_CR_LPDS;
-  PWR->CR  &= (unsigned long) ( ~( PWR_CR_PDDS ) );
+  PWR->CR  &= ~PWR_CR_PDDS;
 
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+
 #endif
 
   nosInit(mainTask, NULL, 1, 5000, 512);
