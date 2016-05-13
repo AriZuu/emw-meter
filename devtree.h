@@ -43,8 +43,6 @@ typedef struct {
   SPI_TypeDef* spi;
 } BusConf;
 
-extern const BusConf spi1BusConf;
-extern const BusConf spi2BusConf;
 extern UosSpiBus spi1Bus;
 extern UosSpiBus spi4Bus;
 
