@@ -350,7 +350,9 @@ const EshCommand *eshCommandList[] = {
   &apCommand,
   &wrCommand,
   &clearCommand,
+#if defined(POS_DEBUGHELP) && POSCFG_ARGCHECK > 1
   &eshTsCommand,
+#endif
   &eshOnewireCommand,
   &eshPingCommand,
   &eshIfconfigCommand,
