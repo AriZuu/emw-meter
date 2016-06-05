@@ -52,7 +52,7 @@
 #include "wwd_management.h"
 #include "wwd_wifi.h"
 #include "wwd_network.h"
-#include "wwd_crypto.h"
+#include "wwd_buffer_interface.h"
 
 #include "emw-meter.h"
 #include "devtree.h"
@@ -79,7 +79,8 @@ static void tcpipInitDone(void *arg)
 /*
  * Bring WIFI up.
  */
-  while ((result = wwd_management_init(WICED_COUNTRY_FINLAND, NULL)) != WWD_SUCCESS) {
+  wwd_buffer_init(NULL);
+  while ((result = wwd_management_wifi_on(WICED_COUNTRY_FINLAND)) != WWD_SUCCESS) {
 
     printf("WWD init error %d\n", result);
     posTaskSleep(MS(30000));
@@ -92,10 +93,7 @@ static void tcpipInitDone(void *arg)
                 myMac.octet[1], myMac.octet[2], myMac.octet[3],
                 myMac.octet[4], myMac.octet[5]);
 
-  uint32_t r;
-
-  wwd_wifi_get_random(&r, sizeof(r));
-  sys_random_init(r);
+  sys_random_init(SysTick->VAL);
 
   ip4_addr_t ipaddr, netmask, gw;
 
