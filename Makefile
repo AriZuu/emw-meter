@@ -33,17 +33,16 @@ PORT = cortex-m
 CPU = stm32
 
 BUILD ?= DEBUG
-#EXTRA_CFLAGS=-Os
-#export EXTRA_CFLAGS
 
-WICED_PLATFORM  ?= EMW3165
-WICED_CHIP      = 43362
-WICED_MCU       = STM32F4xx
-WICED_BUS       = SDIO
-CMSIS_MODULES	= $(CURRENTDIR)/../cmsis-ports/stm32f4xx
-STM32_CHIP	= STM32F411xE
-CORTEX = m4
-LD_SCRIPTS 	= emw3165.ld
+WICED_PLATFORM       = EMW3165
+WICED_CHIP           = 43362
+WICED_CHIP_REVISION  = A2
+WICED_MCU            = STM32F4xx
+WICED_BUS            = SDIO
+CMSIS_MODULES	     = $(CURRENTDIR)/../cmsis-ports/stm32f4xx
+STM32_CHIP	     = STM32F411xE
+CORTEX               = m4
+LD_SCRIPTS 	     = emw3165.ld
 
 export CORTEX
 

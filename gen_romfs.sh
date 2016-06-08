@@ -27,8 +27,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-cd ../wiced-driver/WICED-SDK-3.5.2/resources/firmware/43362
-FILES="43362A2.bin"
+cd $WICED_SDK/resources/firmware/$WICED_CHIP
+FILES="$WICED_CHIP$WICED_CHIP_REVISION.bin"
 
 echo "#include <picoos.h>"
 echo "#include <picoos-u.h>"
