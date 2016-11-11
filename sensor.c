@@ -96,7 +96,7 @@ float read1Wire()
 
     owSerialNum(0, serialNum, TRUE);
     sensorAddressStr(buf, serialNum);
-    if (!ReadTemperature(0, serialNum, &value))
+    if (!ReadTemperature(0, serialNum, &value) || value >= 85.0)
       value = -273;
   }
 
