@@ -53,7 +53,7 @@
 
 #include "wwd_management.h"
 #include "wwd_wifi.h"
-#include "wwd_network.h"
+#include "wiced-driver.h"
 
 #include "eshell.h"
 #include "eshell-commands.h"
