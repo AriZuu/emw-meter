@@ -31,6 +31,7 @@
 #ifndef _POTATO_CFG_H
 #define _POTATO_CFG_H
 
-#define POTATO_TLS	0
+#define POTATO_JSON_MAX_DEPTH 5
+#define POTATO_TLS	      0
 
 #endif /* _POTATO_CFG_H */

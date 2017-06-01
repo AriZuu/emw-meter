@@ -35,12 +35,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-#include "mjson.h"
 #include <eshell.h>
 
 #include "wwd_wifi.h"
 
 #include "potato-bus.h"
+#include "potato-json.h"
 #include "emw-meter.h"
 
 int16_t outsideStats[MAX_STATS];
@@ -96,19 +96,6 @@ int power = MISSING_VALUE;
 int weatherSymbol3 = 0;
 char weatherSymbol = 0;
 
-/*
- * Parse temperature, electrical power and weather forecast symbol from
- * json data that is received from MQTT broker.
- */
-static const struct json_attr_t jsonAttrs[] = {
-
-  { "outsideTemperature", t_real, .addr.real = &outsideTemperature, .nodefault = true },
-  { "power", t_integer, .addr.integer = &power, .nodefault = true },
-  { "weatherSymbol3", t_integer, .addr.integer = &weatherSymbol3, .nodefault = true },
-  { NULL, t_ignore, .addr.integer = NULL }, // Ignore attributes that are not known
-  { NULL }
-};
-  
 static PbClient client;
 
 /*
@@ -134,9 +121,47 @@ const EshCommand mqttCommand = {
   .handler = mqtt
 }; 
 
+static JsonContext ctx;
+
+static float findValue(char* msg, const char* location, const char* sensor)
+{
+  JsonNode* node;
+
+  node = jsonParse(&ctx, msg);
+  if (node == NULL)
+    return MISSING_VALUE;
+
+  node = jsonFind(node, "locations");
+  if (node == NULL)
+    return MISSING_VALUE;
+
+  node = jsonFind(node, location);
+  if (node == NULL)
+    return MISSING_VALUE;
+
+  node = jsonFind(node, sensor);
+  if (node == NULL)
+    return MISSING_VALUE;
+
+  if (!jsonIsArray(node))
+    return MISSING_VALUE;
+
+  float last = MISSING_VALUE;
+
+  while ((node = jsonNext(node)) != NULL) {
+
+    if (!jsonIsNumber(node))
+      return MISSING_VALUE;
+
+    last = jsonReadDouble(node);
+  }
+
+  return last;
+}
+
 static void potatoTask(void* arg)
 {
-  char jsonBuf[80];
+  char jsonBuf[100];
 
 
   while (true) {
@@ -169,10 +194,10 @@ static void potatoTask(void* arg)
  * Subscribe topics we are interested in.
  */
     PbSubscribe sub = {};
-    sub.topic = "sensors/davis";
+    sub.topic = "ts/davis";
     pbSubscribe(&client, &sub);
 
-    sub.topic = "sensors/power-meter";
+    sub.topic = "ts/power-meter";
     pbSubscribe(&client, &sub);
 
     sub.topic = "forecast/fmi";
@@ -192,10 +217,11 @@ static void potatoTask(void* arg)
  */
         if (!IS_MISSING(insideTemperature)) {
 
-          sprintf(jsonBuf, "{\"temperature\":%5.1lf}", insideTemperature);
+          snprintf(jsonBuf, sizeof(jsonBuf),
+                   "{\"locations\":{\"inside\":{\"livingRoom\":{\"temperature\":%5.1lf}}}}", insideTemperature);
           pub.message = (uint8_t*)jsonBuf;
           pub.len = strlen(jsonBuf);
-          pub.topic = "sensors/emw-meter";
+          pub.topic = "sensor/emw-meter";
           if (pbPublish(&client, &pub) < 0)
             break;
         }
@@ -220,46 +246,56 @@ static void potatoTask(void* arg)
       if (type == PB_MQ_PUBLISH) {
   
         pbReadPublish(&client.packet, &pub);
-  
-        int st;
-
         pub.message[pub.len] = '\0';
-        potatoLock();
-        st = json_read_object((char*)pub.message, jsonAttrs, NULL);
-        potatoUnlock();
-        if (st != 0) {
 
-           printf ("json err %s\n", json_error_string(st));
-           continue;
-        }
+        if (!strcmp(pub.topic, "ts/power-meter")) {
 
-        if (!strcmp(pub.topic, "sensors/power-meter")) {
-
+          potatoLock();
+          power = findValue((char*)pub.message, "emeter", "power");
           memmove(powerStats, powerStats + 1, (MAX_STATS - 1) * sizeof(powerStats[0]));
           powerStats[MAX_STATS - 1] = power;
+          potatoUnlock();
         }
 
         if (!strcmp(pub.topic, "forecast/fmi")) {
 
-          unsigned int i;
-          bool found = false;
+          JsonNode* root = jsonParse(&ctx, (char*)pub.message);
 
-          for (i = 0; i < sizeof(fontMap) / sizeof(SymbolFontMap); i++) {
+          JsonNode* sym = jsonFind(root, "weatherSymbol3");
 
-            if (fontMap[i].weatherSymbol3 == weatherSymbol3) {
+          potatoLock();
+          if (!jsonIsNumber(sym)) {
+ 
+            weatherSymbol3 = 0;
+            weatherSymbol  = 0;
+          }
+          else {
 
-              weatherSymbol = fontMap[i].ch;
-              found = true;
-              break;
+            weatherSymbol3 = jsonReadInteger(sym);
+            unsigned int i;
+            bool found = false;
+
+            for (i = 0; i < sizeof(fontMap) / sizeof(SymbolFontMap); i++) {
+
+              if (fontMap[i].weatherSymbol3 == weatherSymbol3) {
+
+                weatherSymbol = fontMap[i].ch;
+                found = true;
+                break;
+              }
             }
+
+            if (!found)
+              weatherSymbol = 0;
           }
 
-          if (!found)
-            weatherSymbol = 0;
+          potatoUnlock();
         }
 
-        if (!strcmp(pub.topic, "sensors/davis")) {
+        if (!strcmp(pub.topic, "ts/davis")) {
 
+          potatoLock();
+          outsideTemperature = findValue((char*)pub.message, "outside", "temperature");
           memmove(outsideStats, outsideStats + 1, (MAX_STATS - 1) * sizeof(outsideStats[0]));
           outsideStats[MAX_STATS - 1] = round(outsideTemperature * 10);
 
@@ -268,6 +304,8 @@ static void potatoTask(void* arg)
             memmove(insideStats, insideStats + 1, (MAX_STATS - 1) * sizeof(insideStats[0]));
             insideStats[MAX_STATS - 1] = round(insideTemperature * 10);
           }
+
+          potatoUnlock();
         }
       }
     }
