@@ -162,7 +162,7 @@ static float findValue(char* msg, const char* location, const char* sensor)
 static void potatoTask(void* arg)
 {
   char jsonBuf[100];
-
+  int timeoutCount;
 
   while (true) {
 
@@ -197,7 +197,7 @@ static void potatoTask(void* arg)
     sub.topic = "ts/davis";
     pbSubscribe(&client, &sub);
 
-    sub.topic = "ts/power-meter";
+    sub.topic = "ts/emeter";
     pbSubscribe(&client, &sub);
 
     sub.topic = "forecast/fmi";
@@ -208,6 +208,7 @@ static void potatoTask(void* arg)
 /*
  * Poll mqtt events.
  */ 
+    timeoutCount = 0;
     while((type = pbEvent(&client))) {
 
       if (type == PB_TIMEOUT) {
@@ -215,8 +216,9 @@ static void potatoTask(void* arg)
  * When receive times out, either send out room temperature
  * that has been read or at least keepalive message.
  */
-        if (!IS_MISSING(insideTemperature)) {
+        if (!IS_MISSING(insideTemperature) && timeoutCount >= 5) {
 
+          timeoutCount = 0;
           snprintf(jsonBuf, sizeof(jsonBuf),
                    "{\"locations\":{\"inside\":{\"livingRoom\":{\"temperature\":%5.1lf}}}}", insideTemperature);
           pub.message = (uint8_t*)jsonBuf;
@@ -229,6 +231,7 @@ static void potatoTask(void* arg)
           if (pbPing(&client) < 0)
             break;
 
+        ++timeoutCount;
         continue;
       }
 
@@ -248,7 +251,7 @@ static void potatoTask(void* arg)
         pbReadPublish(&client.packet, &pub);
         pub.message[pub.len] = '\0';
 
-        if (!strcmp(pub.topic, "ts/power-meter")) {
+        if (!strcmp(pub.topic, "ts/emeter")) {
 
           potatoLock();
           power = findValue((char*)pub.message, "emeter", "power");
