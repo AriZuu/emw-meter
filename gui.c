@@ -102,7 +102,7 @@ static void guiTask(void* arg)
       else
         sprintf(buf, "%1.0f", t);
 
-      UG_PutString(LABEL_POS, "PWR    kW");
+      UG_PutString(LABEL_POS, "PWR      W");
       break;
     }
 
