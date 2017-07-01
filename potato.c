@@ -43,6 +43,11 @@
 #include "potato-json.h"
 #include "emw-meter.h"
 
+static const char* SENSOR_EMW_METER = "sensor/emw-meter";
+static const char* FORECAST_FMI = "forecast/fmi";
+static const char* TS_EMETER = "ts/emeter";
+static const char* TS_DAVIS_HOME = "ts/davis/home";
+
 int16_t outsideStats[MAX_STATS];
 int16_t insideStats[MAX_STATS];
 int16_t powerStats[MAX_STATS];
@@ -194,13 +199,13 @@ static void potatoTask(void* arg)
  * Subscribe topics we are interested in.
  */
     PbSubscribe sub = {};
-    sub.topic = "ts/davis/home";
+    sub.topic = TS_DAVIS_HOME;
     pbSubscribe(&client, &sub);
 
-    sub.topic = "ts/emeter";
+    sub.topic = TS_EMETER;
     pbSubscribe(&client, &sub);
 
-    sub.topic = "forecast/fmi";
+    sub.topic = FORECAST_FMI;
     pbSubscribe(&client, &sub);
 
     int type;
@@ -223,7 +228,7 @@ static void potatoTask(void* arg)
                    "{\"locations\":{\"inside\":{\"livingRoom\":{\"temperature\":%5.1lf}}}}", insideTemperature);
           pub.message = (uint8_t*)jsonBuf;
           pub.len = strlen(jsonBuf);
-          pub.topic = "sensor/emw-meter";
+          pub.topic = SENSOR_EMW_METER;
           if (pbPublish(&client, &pub) < 0)
             break;
         }
@@ -251,7 +256,7 @@ static void potatoTask(void* arg)
         pbReadPublish(&client.packet, &pub);
         pub.message[pub.len] = '\0';
 
-        if (!strcmp(pub.topic, "ts/emeter")) {
+        if (!strcmp(pub.topic, TS_EMETER)) {
 
           potatoLock();
           power = findValue((char*)pub.message, "emeter", "power");
@@ -260,7 +265,7 @@ static void potatoTask(void* arg)
           potatoUnlock();
         }
 
-        if (!strcmp(pub.topic, "forecast/fmi")) {
+        if (!strcmp(pub.topic, FORECAST_FMI)) {
 
           JsonNode* root = jsonParse(&ctx, (char*)pub.message);
 
@@ -295,7 +300,7 @@ static void potatoTask(void* arg)
           potatoUnlock();
         }
 
-        if (!strcmp(pub.topic, "ts/davis")) {
+        if (!strcmp(pub.topic, TS_DAVIS_HOME)) {
 
           potatoLock();
           outsideTemperature = findValue((char*)pub.message, "outside", "temperature");
