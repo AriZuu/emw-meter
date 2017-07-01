@@ -194,7 +194,7 @@ static void potatoTask(void* arg)
  * Subscribe topics we are interested in.
  */
     PbSubscribe sub = {};
-    sub.topic = "ts/davis";
+    sub.topic = "ts/davis/home";
     pbSubscribe(&client, &sub);
 
     sub.topic = "ts/emeter";
