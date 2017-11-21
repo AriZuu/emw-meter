@@ -186,7 +186,7 @@ static void potatoTask(void* arg)
       continue;
     }
 
-    if (pbConnectURL(&client, server, &cd) < 0) {
+    if (pbConnect(&client, server, &cd) < 0) {
 
       printf("potato: connect failed.\n");
       posTaskSleep(MS(10000));
