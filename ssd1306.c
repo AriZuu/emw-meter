@@ -146,6 +146,25 @@ static void writeData(uint8_t cmd)
   uosSpiEnd(&oledDev);
 }
 
+void guiReset()
+{
+  C_D(Bit_RESET);
+  RST(Bit_SET);
+  posTaskSleep(MS(100));
+  RST(Bit_RESET);
+
+  posTaskSleep(MS(100));
+  RST(Bit_SET);
+  posTaskSleep(MS(100));
+
+  const uint8_t* cmd;
+  unsigned int i;
+
+  cmd = init;
+  for (i = 0; i < sizeof(init); i++, cmd++)
+    writeCmd(*cmd);
+}
+
 void guiInit()
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -169,22 +188,7 @@ void guiInit()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-  C_D(Bit_RESET);
-  RST(Bit_SET);
-  posTaskSleep(MS(100));
-  RST(Bit_RESET);
-
-  posTaskSleep(MS(100));
-  RST(Bit_SET);
-  posTaskSleep(MS(100));
-
-  const uint8_t* cmd;
-  unsigned int i;
-
-  cmd = init;
-  for (i = 0; i < sizeof(init); i++, cmd++)
-    writeCmd(*cmd);
-
+  guiReset();
   UG_Init(&gui, drawPixel, 128, 64);
 
   UG_FillScreen(C_BLACK);

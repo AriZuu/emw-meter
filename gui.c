@@ -50,12 +50,27 @@ static void guiTask(void* arg)
   float t;
   char buf[20];
   int16_t* stats = NULL;
+  int displayResetCounter = 0;
 
   while (true) {
 
     ++meas;
-    if (meas > 2)
+    if (meas > 2) {
+
       meas = 0;
+
+      // Display sometimes gets corrupted,
+      // work around it by resetting it once per 10 minutes.
+      if (displayResetCounter >= 40) {
+
+        UG_FillScreen(C_BLACK);
+        guiUpdateScreen();
+        guiReset();
+        displayResetCounter = 0;
+      }
+    }
+
+    ++displayResetCounter;
 
     UG_FillScreen(C_BLACK);
 

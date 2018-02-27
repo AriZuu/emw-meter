@@ -41,6 +41,7 @@ void potatoStart(void);
 void potatoLock(void);
 void potatoUnlock(void);
 void guiInit(void);
+void guiReset(void);
 void guiStart(void);
 void guiUpdateScreen(void);
 
