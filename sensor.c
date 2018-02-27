@@ -34,6 +34,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "devtree.h"
+#include "emw-meter.h"
 
 #include <picoos-ow.h>
 #include <temp10.h>
