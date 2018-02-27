@@ -200,13 +200,31 @@ static void potatoTask(void* arg)
  */
     PbSubscribe sub = {};
     sub.topic = TS_DAVIS_HOME;
-    pbSubscribe(&client, &sub);
+    if (pbSubscribe(&client, &sub) < 0) {
+
+      printf("potato: subscribe failed.\n");
+      pbDisconnect(&client);
+      posTaskSleep(MS(10000));
+      continue;
+    }
 
     sub.topic = TS_EMETER;
-    pbSubscribe(&client, &sub);
+    if (pbSubscribe(&client, &sub) < 0) {
+
+      printf("potato: subscribe failed.\n");
+      pbDisconnect(&client);
+      posTaskSleep(MS(10000));
+      continue;
+    }
 
     sub.topic = FORECAST_FMI;
-    pbSubscribe(&client, &sub);
+    if (pbSubscribe(&client, &sub) < 0) {
+
+      printf("potato: subscribe failed.\n");
+      pbDisconnect(&client);
+      posTaskSleep(MS(10000));
+      continue;
+    }
 
     int type;
  
