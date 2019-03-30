@@ -32,7 +32,7 @@ RELROOT = ../picoos/
 PORT = cortex-m
 CPU = stm32
 
-BUILD ?= DEBUG
+BUILD ?= RELEASE
 
 WICED_PLATFORM       = EMW3165
 WICED_CHIP           = 43362
