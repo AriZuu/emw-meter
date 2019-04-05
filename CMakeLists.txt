@@ -45,6 +45,8 @@ set(LD_SCRIPTS emw3165.ld)
 set(NANO 1)
 set(STM32_DEFINES HSE_VALUE=26000000)
 
+set(ROMFILES romfiles.c)
+
 include(../picoos/cmake/ToolchainInit.cmake)
 
 project(emw-meter)
@@ -52,7 +54,7 @@ project(emw-meter)
 set(DIR_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(SRC  main.c
          startup.c
-         romfiles.c
+         ${ROMFILES}
          sta.c
          ap.c
          led.c
@@ -84,4 +86,9 @@ target_include_directories(${PROJECT_NAME}
 
 
 set(FIRMWARE ${WICED_SDK}/resources/firmware/${WICED_CHIP}/${WICED_CHIP}${WICED_CHIP_REVISION}.bin)
+
+add_custom_command(
+  OUTPUT ${ROMFILES}
+  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/gen_romfs.sh ${BUNDLE_FIRMWARE} ${FIRMWARE} ${CMAKE_CURRENT_SOURCE_DIR} > ${ROMFILES}
+  COMMENT "Generating RomFS.")
 
