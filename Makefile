@@ -90,7 +90,7 @@ POSTLINK1 = arm-none-eabi-size $(TARGETOUT)
 include $(MAKE_OUT)
 
 romfiles.c:
-	sh gen_romfs.sh > romfiles.c
+	sh gen_romfs.sh 1 > romfiles.c
 
 FONT=BebasNeue
 
